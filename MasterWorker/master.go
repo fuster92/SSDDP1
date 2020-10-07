@@ -1,3 +1,10 @@
+// AUTORES: Javier Fuster Trallero / Javier Herrer Torres
+// NIAs: 626901 / 776609
+// FICHERO: master.go
+// FECHA: 05-oct-2020
+// TIEMPO: 1h
+// DESCRIPCIÓN: Implementa un servidor master dentro de una arquitectura master-worker
+
 package main
 
 import (
@@ -39,7 +46,10 @@ func main() {
 
 	petitionsReceived := 0
 	listener, err := net.Listen(utils.ConnectionType, ":"+utils.ServerPort)
-	utils.CheckError(err)
+	if err != nil {
+		_, _ = fmt.Fprint(os.Stderr, err.Error())
+		os.Exit(1)
+	}
 	fmt.Printf("Accepting petitions on Port %s\n", utils.ServerPort)
 	for {
 		conn, err := listener.Accept()

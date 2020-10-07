@@ -1,3 +1,10 @@
+// AUTORES: Javier Fuster Trallero / Javier Herrer Torres
+// NIAs: 626901 / 776609
+// FICHERO: worker.go
+// FECHA: 05-oct-2020
+// TIEMPO: 20'
+// DESCRIPCIÓN: Implementa un worker dentro de una arquitectura master-worker
+
 package main
 
 import (
@@ -16,7 +23,10 @@ import (
 func main() {
 	port := os.Args[1]
 	listener, err := net.Listen(utils.ConnectionType, ":"+port)
-	utils.CheckError(err)
+	if err != nil {
+		fmt.Fprint(os.Stderr, err.Error())
+		os.Exit(1)
+	}
 
 	conn, err := listener.Accept()
 	for {

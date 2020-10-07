@@ -1,3 +1,10 @@
+// AUTORES: Javier Fuster Trallero / Javier Herrer Torres
+// NIAs: 626901 / 776609
+// FICHERO: service.go
+// FECHA: 04-oct-2020
+// TIEMPO: 15'
+// DESCRIPCIÓN: Describe un struct con un servicio en red
+
 package utils
 
 // Describes a service with a name and an address.

@@ -1,3 +1,10 @@
+// AUTORES: Javier Fuster Trallero / Javier Herrer Torres
+// NIAs: 626901 / 776609
+// FICHERO: calculartiempo.go
+// FECHA: 04-oct-2020
+// TIEMPO: 5'
+// DESCRIPCIÓN: calcula el tiempo medio que le cuesta a la máquina calcular los primos hasta 60000
+
 package main
 
 import (

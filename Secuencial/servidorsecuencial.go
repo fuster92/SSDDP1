@@ -1,3 +1,10 @@
+// AUTORES: Javier Fuster Trallero / Javier Herrer Torres
+// NIAs: 626901 / 776609
+// FICHERO: servidorsecuencial.go
+// FECHA: 02-oct-2020
+// TIEMPO: 30'
+// DESCRIPCIÓN: Implementa un servidor que atiende secuencialmente las peticiones que le llegan
+
 package main
 
 import (
@@ -11,9 +18,12 @@ import (
 func main() {
 	fmt.Printf("Starting server\n")
 	listener, err := net.Listen(utils.ConnectionType, ":"+utils.ServerPort)
-	utils.CheckError(err)
+	if err != nil {
+		fmt.Fprint(os.Stderr, err.Error())
+		os.Exit(1)
+	}
 
-	petitionId := 0
+	petitionID := 0
 	fmt.Printf("Accepting petitions on port %s\n", utils.ServerPort)
 	for {
 		conn, err := listener.Accept()
@@ -24,9 +34,11 @@ func main() {
 		if err != nil {
 			continue
 		}
-		requestHandler(utils.Job{conn, request})
-		petitionId++
-		fmt.Printf("[%d] Request from %s queued\n", petitionId, conn.RemoteAddr().String())
+		requestHandler(utils.Job{
+			Connection: conn,
+			Request:    request})
+		petitionID++
+		fmt.Printf("[%d] Request from %s queued\n", petitionID, conn.RemoteAddr().String())
 	}
 }
 

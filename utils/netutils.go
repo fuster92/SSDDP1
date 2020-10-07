@@ -1,3 +1,10 @@
+// AUTORES: Javier Fuster Trallero / Javier Herrer Torres
+// NIAs: 626901 / 776609
+// FICHERO: netutils.go
+// FECHA: 04-oct-2020
+// TIEMPO: 30'
+// DESCRIPCIÓN: Aglutina constantes y funciones para comunicarse en red
+
 // Utility functions and constants used by servers and clients
 package utils
 

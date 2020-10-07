@@ -1,3 +1,9 @@
+// AUTORES: Rafael Tolosana Calasanz
+// FICHERO: primes.go
+// FECHA: 01-oct-2020
+// TIEMPO: 30'
+// DESCRIPCIÓN: Funciones para el cálculo de primos
+
 package utils
 
 func IsPrime(n int) (foundDivisor bool) {

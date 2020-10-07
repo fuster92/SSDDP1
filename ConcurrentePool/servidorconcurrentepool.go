@@ -1,3 +1,11 @@
+// AUTORES: Javier Fuster Trallero / Javier Herrer Torres
+// NIAs: 626901 / 776609
+// FICHERO: servidorconcurrentepool.go
+// FECHA: 04-oct-2020
+// TIEMPO: 1h
+// DESCRIPCIÓN: Implementa un servidor que atiende concurrentemente las peticiones que le llegan mediante la
+// creación de un número establecido de goroutines
+
 package main
 
 import (
@@ -12,10 +20,13 @@ func main() {
 	fmt.Printf("Starting server\n")
 	jobsBuffer := make(chan utils.Job, 10)
 	listener, err := net.Listen(utils.ConnectionType, ":"+utils.ServerPort)
-	utils.CheckError(err)
+	if err != nil {
+		fmt.Fprint(os.Stderr, err.Error())
+		os.Exit(1)
+	}
 	initializeGoRoutinePool(jobsBuffer)
 
-	petitionId := 0
+	petitionID := 0
 	fmt.Printf("Accepting petitions on port %s\n", utils.ServerPort)
 	for {
 		conn, err := listener.Accept()
@@ -28,10 +39,9 @@ func main() {
 		}
 
 		jobsBuffer <- utils.Job{Connection: conn, Request: request}
-		petitionId++
-		fmt.Printf("[%d] Request from %s queued\n", petitionId, conn.RemoteAddr().String())
+		petitionID++
+		fmt.Printf("[%d] Request from %s queued\n", petitionID, conn.RemoteAddr().String())
 	}
-
 }
 
 // Initializes a pool of requestHandler functions
@@ -42,15 +52,15 @@ func initializeGoRoutinePool(buffer chan utils.Job) {
 }
 
 // Gets a request from th buffer and processes it
-func requestHandler(workerId int, buffer chan utils.Job) {
+func requestHandler(workerID int, buffer chan utils.Job) {
 	var job utils.Job
 	for {
 		job = <-buffer
 		prime := job.Request.Prime
-		fmt.Printf("Worker [%d] Serving Request: %d \n", workerId, prime)
+		fmt.Printf("Worker [%d] Serving Request: %d \n", workerID, prime)
 		primes := utils.FindPrimes(prime)
 		sendPrimes(job.Connection, primes)
-		fmt.Printf("Worker [%d] Sending primes: %d \n", workerId, prime)
+		fmt.Printf("Worker [%d] Sending primes: %d \n", workerID, prime)
 		err := job.Connection.Close()
 		if err != nil {
 			_, _ = fmt.Fprintf(os.Stderr, err.Error()+"\n")
