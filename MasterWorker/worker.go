@@ -15,7 +15,7 @@ import (
 
 func main() {
 	port := os.Args[1]
-	listener, err := net.Listen(utils.CONNECTION_TYPE, ":"+port)
+	listener, err := net.Listen(utils.ConnectionType, ":"+port)
 	utils.CheckError(err)
 
 	conn, err := listener.Accept()

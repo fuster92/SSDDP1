@@ -41,7 +41,7 @@ func main() {
 func makeRequest(counter int, petSec int, pretty bool) {
 	start := time.Now()
 	conn := connect()
-	err := sendRequest(conn, utils.Request{ID: counter, Prime: utils.SIZE})
+	err := sendRequest(conn, utils.Request{ID: counter, Prime: utils.Size})
 	if err == nil {
 		utils.ReadPrimes(conn)
 		elapsed := time.Now().Sub(start)
@@ -71,7 +71,7 @@ func sendRequest(conn net.Conn, request utils.Request) error {
 
 // Connects to the remote host.
 func connect() net.Conn {
-	conn, err := net.Dial(utils.CONNECTION_TYPE, "localhost"+":"+utils.SERVER_PORT)
+	conn, err := net.Dial(utils.ConnectionType, "localhost"+":"+utils.ServerPort)
 	utils.CheckError(err)
 	return conn
 }

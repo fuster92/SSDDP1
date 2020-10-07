@@ -38,9 +38,9 @@ func main() {
 	initializeHandlerPool(workers, jobsBuffer)
 
 	petitionsReceived := 0
-	listener, err := net.Listen(utils.CONNECTION_TYPE, ":"+utils.SERVER_PORT)
+	listener, err := net.Listen(utils.ConnectionType, ":"+utils.ServerPort)
 	utils.CheckError(err)
-	fmt.Printf("Accepting petitions on Port %s\n", utils.SERVER_PORT)
+	fmt.Printf("Accepting petitions on Port %s\n", utils.ServerPort)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -85,7 +85,7 @@ func petitionHandler(worker utils.Service, buffer chan utils.Job) {
 
 	// Connect with the worker
 	for !connected {
-		workerConn, err = net.Dial(utils.CONNECTION_TYPE, worker.Address())
+		workerConn, err = net.Dial(utils.ConnectionType, worker.Address())
 		if err == nil {
 			connected = true
 		}

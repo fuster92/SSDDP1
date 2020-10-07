@@ -10,11 +10,11 @@ import (
 
 func main() {
 	fmt.Printf("Starting server\n")
-	listener, err := net.Listen(utils.CONNECTION_TYPE, ":"+utils.SERVER_PORT)
+	listener, err := net.Listen(utils.ConnectionType, ":"+utils.ServerPort)
 	utils.CheckError(err)
 
 	petitionId := 0
-	fmt.Printf("Accepting petitions on port %s\n", utils.SERVER_PORT)
+	fmt.Printf("Accepting petitions on port %s\n", utils.ServerPort)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
