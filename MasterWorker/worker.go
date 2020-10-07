@@ -1,6 +1,7 @@
 package main
 
 import (
+	"../utils"
 	"encoding/gob"
 	"fmt"
 	"net"
@@ -9,13 +10,13 @@ import (
 
 // Args
 // Arg 1 -> Port to listen
-// Arg 2 -> Master's host
-// Arg 3 -> Master's port
+// Arg 2 -> Master's Host
+// Arg 3 -> Master's Port
 
 func main() {
 	port := os.Args[1]
-	listener, err := net.Listen(CONNECTION_TYPE, ":"+port)
-	checkError(err)
+	listener, err := net.Listen(utils.CONNECTION_TYPE, ":"+port)
+	utils.CheckError(err)
 
 	conn, err := listener.Accept()
 	for {
@@ -25,11 +26,14 @@ func main() {
 		fmt.Printf("Job Accepted\n")
 		decoder := gob.NewDecoder(conn)
 		var n int
-		decoder.Decode(&n)
-		fmt.Printf("\tCalc petition -> %d\n", n)
+		err := decoder.Decode(&n)
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, err.Error()+"\n")
+		}
+		fmt.Printf("\tCalc Petition -> %d\n", n)
 
-		primes := FindPrimes(n)
+		primes := utils.FindPrimes(n)
 		fmt.Printf("\tSending primes\n")
-		sendPrimes(conn, primes)
+		utils.SendPrimes(conn, primes)
 	}
 }

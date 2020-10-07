@@ -1,1 +1,3 @@
-module "utils"
+module utils
+
+go 1.15

@@ -1,18 +1,20 @@
 package main
 
 import (
+	"../utils"
 	"encoding/gob"
 	"fmt"
 	"net"
+	"os"
 )
 
 func main() {
 	fmt.Printf("Starting server\n")
-	listener, err := net.Listen(TYPE, ":"+PORT)
-	checkError(err)
+	listener, err := net.Listen(utils.CONNECTION_TYPE, ":"+utils.SERVER_PORT)
+	utils.CheckError(err)
 
 	petitionId := 0
-	fmt.Printf("Accepting petitions on port %s\n", PORT)
+	fmt.Printf("Accepting petitions on port %s\n", utils.SERVER_PORT)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -22,34 +24,38 @@ func main() {
 		if err != nil {
 			continue
 		}
-		go requestHandler(Job{conn, request})
+		go requestHandler(utils.Job{Connection: conn, Request: request})
 		petitionId++
 		fmt.Printf("[%d] Request from %s queued\n", petitionId, conn.RemoteAddr().String())
 	}
 }
 
 // Gets a request from th buffer and processes it
-func requestHandler(job Job) {
-    primes := FindPrimes(job.request.Prime)
-		sendPrimes(job.connection, primes)
-		err := job.connection.Close()
-		if err != nil {
-			printError(err)
-		}
+func requestHandler(job utils.Job) {
+	primes := utils.FindPrimes(job.Request.Prime)
+	sendPrimes(job.Connection, primes)
+	err := job.Connection.Close()
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, err.Error()+"\n")
+	}
 }
 
 // Sends the primes
 func sendPrimes(connection net.Conn, primes []int) {
 	encoder := gob.NewEncoder(connection)
 	err := encoder.Encode(primes)
-	printError(err)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, err.Error()+"\n")
+	}
 }
 
 // Receives data from a TCP connection
-func receiveRequest(connection net.Conn) Request {
-	var data Request
+func receiveRequest(connection net.Conn) utils.Request {
+	var data utils.Request
 	decoder := gob.NewDecoder(connection)
-	error := decoder.Decode(&data)
-	printError(error)
+	err := decoder.Decode(&data)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, err.Error()+"\n")
+	}
 	return data
 }

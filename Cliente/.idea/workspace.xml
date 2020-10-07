@@ -1,14 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="8b579705-4e35-4e17-ae8c-c150ba2860be" name="Default Changelist" comment="" />
+    <list default="true" id="8b579705-4e35-4e17-ae8c-c150ba2860be" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/Cliente.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente.go" beforeDir="false" afterPath="$PROJECT_DIR$/cliente.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/definitions.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Concurrente/definitions.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Concurrente/primes.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ConcurrentePool/definitions.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ConcurrentePool/primes.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MasterWorker/.idea/MasterWorker.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MasterWorker/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MasterWorker/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MasterWorker/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Secuencial/definitions.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Secuencial/primes.go" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="GOROOT" path="/usr/lib/go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="ProjectId" id="1iQCcnGqdU8ybaBBC2oW0jqVrKh" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -38,11 +76,26 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="WindowStateProjectService">
     <state x="1525" y="326" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1601830555990">
       <screen x="0" y="0" width="2560" height="1044" />
     </state>
     <state x="1525" y="326" key="#com.intellij.fileTypes.FileTypeChooser/0.0.2560.1044@0.0.2560.1044" timestamp="1601830555990" />
+    <state x="1063" y="266" key="FileChooserDialogImpl" timestamp="1601839346238">
+      <screen x="0" y="0" width="2560" height="1044" />
+    </state>
+    <state x="1063" y="266" key="FileChooserDialogImpl/0.0.2560.1044@0.0.2560.1044" timestamp="1601839346238" />
     <state width="2514" height="276" key="GridCell.Tab.0.bottom" timestamp="1601832155304">
       <screen x="0" y="0" width="2560" height="1044" />
     </state>

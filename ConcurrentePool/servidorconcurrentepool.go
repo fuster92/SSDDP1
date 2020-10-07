@@ -1,21 +1,22 @@
 package main
 
 import (
+	"../utils"
 	"encoding/gob"
 	"fmt"
 	"net"
+	"os"
 )
-
 
 func main() {
 	fmt.Printf("Starting server\n")
-	jobsBuffer := make(chan Job, 10)
-	listener, err := net.Listen(TYPE,":" + PORT)
-	checkError(err)
+	jobsBuffer := make(chan utils.Job, 10)
+	listener, err := net.Listen(utils.CONNECTION_TYPE, ":"+utils.SERVER_PORT)
+	utils.CheckError(err)
 	initializeGoRoutinePool(jobsBuffer)
 
 	petitionId := 0
-	fmt.Printf("Accepting petitions on port %s\n", PORT)
+	fmt.Printf("Accepting petitions on port %s\n", utils.SERVER_PORT)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -25,31 +26,34 @@ func main() {
 		if err != nil {
 			continue
 		}
-		jobsBuffer <- Job{conn, request}
+
+		jobsBuffer <- utils.Job{Connection: conn, Request: request}
 		petitionId++
 		fmt.Printf("[%d] Request from %s queued\n", petitionId, conn.RemoteAddr().String())
 	}
+
 }
 
 // Initializes a pool of requestHandler functions
-func initializeGoRoutinePool(buffer chan Job) {
+func initializeGoRoutinePool(buffer chan utils.Job) {
 	for i := 0; i < 3; i++ {
 		go requestHandler(i, buffer)
 	}
 }
 
 // Gets a request from th buffer and processes it
-func requestHandler(workerId int, buffer chan Job) {
-	var job Job
+func requestHandler(workerId int, buffer chan utils.Job) {
+	var job utils.Job
 	for {
-		job  = <- buffer
-		fmt.Printf("Worker [%d] Serving Request: %d \n", workerId, job.request.Prime)
-		primes := FindPrimes(job.request.Prime)
-		sendPrimes(job.connection, primes)
-		fmt.Printf("Worker [%d] Sending primes: %d \n", workerId, job.request.Prime)
-		err := job.connection.Close()
+		job = <-buffer
+		prime := job.Request.Prime
+		fmt.Printf("Worker [%d] Serving Request: %d \n", workerId, prime)
+		primes := utils.FindPrimes(prime)
+		sendPrimes(job.Connection, primes)
+		fmt.Printf("Worker [%d] Sending primes: %d \n", workerId, prime)
+		err := job.Connection.Close()
 		if err != nil {
-			printError(err)
+			_, _ = fmt.Fprintf(os.Stderr, err.Error()+"\n")
 		}
 	}
 }
@@ -58,15 +62,18 @@ func requestHandler(workerId int, buffer chan Job) {
 func sendPrimes(connection net.Conn, primes []int) {
 	encoder := gob.NewEncoder(connection)
 	err := encoder.Encode(primes)
-	printError(err)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, err.Error()+"\n")
+	}
 }
 
 // Receives data from a TCP connection
-func receiveRequest(connection net.Conn) Request{
-	var data Request
+func receiveRequest(connection net.Conn) utils.Request {
+	var data utils.Request
 	decoder := gob.NewDecoder(connection)
-	error := decoder.Decode(&data)
-	printError(error)
+	err := decoder.Decode(&data)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, err.Error()+"\n")
+	}
 	return data
 }
-

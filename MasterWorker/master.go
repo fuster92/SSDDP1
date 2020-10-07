@@ -1,147 +1,128 @@
 package main
 
 import (
+	"../utils"
 	"encoding/gob"
 	"fmt"
 	"net"
-	"os/exec"
-	"time"
+	"os"
 )
 
 func main() {
 	fmt.Printf("Starting server\n")
-	jobsBuffer := make(chan Job, 100)
+	jobsBuffer := make(chan utils.Job, 100)
 
 	// Slice of workers to start
-	workers := []Service{{
-		name: "Worker1",
-		host: "",
-		port: "5556",
+	workers := []utils.Service{{
+		Name: "Worker1",
+		Host: "",
+		Port: "5556",
 	}, {
-		name: "Worker2",
-		host: "",
-		port: "5557",
+		Name: "Worker2",
+		Host: "",
+		Port: "5557",
 	}, {
-		name: "Worker3",
-		host: "",
-		port: "5558",
+		Name: "Worker3",
+		Host: "",
+		Port: "5558",
 	}, {
-		name: "Worker4",
-		host: "",
-		port: "5559",
+		Name: "Worker4",
+		Host: "",
+		Port: "5559",
 	}, {
-		name: "Worker5",
-		host: "",
-		port: "5560",
+		Name: "Worker5",
+		Host: "",
+		Port: "5560",
 	}}
-	initializeWorkers(workers)
+
 	initializeHandlerPool(workers, jobsBuffer)
 
 	petitionsReceived := 0
-	listener, err := net.Listen(CONNECTION_TYPE, ":"+PORT)
-	checkError(err)
-	fmt.Printf("Accepting petitions on port %s\n", PORT)
+	listener, err := net.Listen(utils.CONNECTION_TYPE, ":"+utils.SERVER_PORT)
+	utils.CheckError(err)
+	fmt.Printf("Accepting petitions on Port %s\n", utils.SERVER_PORT)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
 			continue
 		}
-		request := receivePetition(conn)
+		request, err := receivePetition(conn)
 		if err != nil {
 			continue
 		}
-		jobsBuffer <- Job{conn, request}
+		jobsBuffer <- utils.Job{Connection: conn, Request: request}
 		petitionsReceived++
 	}
 }
 
-// Counts 10 petitions and returns an estimated rate
-func petitionsPerSecond(notifier chan byte, out chan float64) {
-	for {
-		//Blocks
-		<-notifier
-		start := time.Now()
-		for i := 0; i < 9; i++ {
-			<-notifier
-		}
-		elapsed := time.Now().Sub(start)
-		out <- elapsed.Seconds() / 10.0
-	}
-}
+// Receives a petition from a client
+func receivePetition(connection net.Conn) (utils.Request, error) {
+	var petition utils.Request
+	decoder := gob.NewDecoder(connection)
+	err := decoder.Decode(&petition)
+	if err != nil {
 
-// Starts the workers processes
-func initializeWorkers(workers []Service) {
-	for _, worker := range workers {
-		startWorker(worker.port)
+		return petition, err
 	}
-}
-
-// Executes the worker's binary
-func startWorker(port string) {
-	command := exec.Command("./worker", port)
-	err := command.Start()
-	command.Stdout = nil
-	command.Stderr = nil
-	checkError(err)
+	return petition, nil
 }
 
 // Initializes a pool of petitionHandler functions
-func initializeHandlerPool(workers []Service, buffer chan Job) {
+func initializeHandlerPool(workers []utils.Service, buffer chan utils.Job) {
 	for _, worker := range workers {
 		go petitionHandler(worker, buffer)
 	}
 }
 
-// Gets a petition from the buffer and passes it to a worker
-func petitionHandler(worker Service, buffer chan Job) {
-	var job Job
-	var workerConn net.Conn
-	var err error
+// Gets a Petition from the buffer and passes it to a worker
+func petitionHandler(worker utils.Service, buffer chan utils.Job) {
+	var (
+		job        utils.Job
+		workerConn net.Conn
+		err        error
+	)
 	connected := false
+
 	// Connect with the worker
 	for !connected {
-		workerConn, err = net.Dial(CONNECTION_TYPE, worker.address())
+		workerConn, err = net.Dial(utils.CONNECTION_TYPE, worker.Address())
 		if err == nil {
 			connected = true
 		}
 	}
-	fmt.Printf("Worker %s is listening on %s:%s\n", worker.name, worker.host, worker.port)
+	fmt.Printf("Worker %s is listening on %s:%s\n", worker.Name, worker.Host, worker.Port)
 	for {
 		job = <-buffer
-		fmt.Printf("Worker [%s] Serving Petition: %d \n", worker.name, job.petition.Prime)
+		fmt.Printf("Worker [%s] Assigned Request: %d \n", worker.Name, job.Request.Prime)
 
 		// ----------------------
-		primes := calcPrimes(workerConn, job.petition.Prime)
+		primes, err := calcPrimes(workerConn, job.Request.Prime)
 		// ----------------------
-
-		sendPrimes(job.connection, primes)
-		fmt.Printf("Worker [%s] Sending primes: %d \n", worker.name, job.petition.Prime)
-		err := job.connection.Close()
 		if err != nil {
-			printError(err)
+			_, _ = fmt.Fprintf(os.Stderr, err.Error()+"\n")
+			continue
 		}
+		utils.SendPrimes(job.Connection, primes)
+		fmt.Printf("Worker [%s] Sending primes: %d \n", worker.Name, job.Request.Prime)
+		if job.Connection.Close() != nil {
+			_, _ = fmt.Fprintf(os.Stderr, err.Error()+"\n")
+		}
+
 	}
 }
 
 // Ask the worker for the calculation
-func calcPrimes(conn net.Conn, n int) []int {
+func calcPrimes(conn net.Conn, n int) ([]int, error) {
 	encoder := gob.NewEncoder(conn)
 	decoder := gob.NewDecoder(conn)
-	encoder.Encode(n)
-	var primes []int
-	err := decoder.Decode(&primes)
-	checkError(err)
-	return primes
-}
-
-// Receives a petition from a client
-func receivePetition(connection net.Conn) Petition {
-	var petition Petition
-	decoder := gob.NewDecoder(connection)
-	err := decoder.Decode(&petition)
+	err := encoder.Encode(n)
 	if err != nil {
-		printError(err)
-
+		return nil, err
 	}
-	return petition
+	var primes []int
+	err = decoder.Decode(&primes)
+	if err != nil {
+		return nil, err
+	}
+	return primes, err
 }

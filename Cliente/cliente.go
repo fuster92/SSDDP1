@@ -1,6 +1,8 @@
+// Creates a client that ask for a list of prime numbers to a server
 package main
 
 import (
+	"../utils"
 	"encoding/gob"
 	"fmt"
 	"net"
@@ -10,65 +12,66 @@ import (
 )
 
 func main() {
-	var counter int
-	var petPerSec int64
-
-	var petitions int
+	var requestsPerSecond int
 	var maxNumberRequest int
 	pretty := false
+
 	switch len(os.Args) {
-	case 1,2:
-		fmt.Printf("Usage %s req/s [maxNumberRequest] [pretty]", os.Args[0])
+	case 1, 2:
+		fmt.Printf("Usage %s req/s [maxNumberRequest] [pretty printing]", os.Args[0])
 		os.Exit(0)
 	case 3:
-		petitions, _ = strconv.Atoi(os.Args[1])
+		requestsPerSecond, _ = strconv.Atoi(os.Args[1])
 		maxNumberRequest, _ = strconv.Atoi(os.Args[2])
 	case 4:
-		petitions, _ = strconv.Atoi(os.Args[1])
+		requestsPerSecond, _ = strconv.Atoi(os.Args[1])
 		maxNumberRequest, _ = strconv.Atoi(os.Args[2])
 		pretty = true
 	}
 
-	petPerSec = 1000 / int64(petitions)
+	millisBetweenRequest := 1000 / int64(requestsPerSecond)
 
 	for i := 0; i < maxNumberRequest; i++ {
-		go makePetition(counter, petitions, pretty)
-		time.Sleep(time.Millisecond * time.Duration(petPerSec))
+		go makeRequest(i, requestsPerSecond, pretty)
+		time.Sleep(time.Millisecond * time.Duration(millisBetweenRequest))
 	}
 }
 
-func makePetition(counter int, petSec int, pretty bool) {
+// Makes a request to the remote server.
+func makeRequest(counter int, petSec int, pretty bool) {
 	start := time.Now()
 	conn := connect()
-	sendRequest(conn, Petition{int(counter), SIZE})
-
-	readPrimes(conn)
-	elapsed := time.Now().Sub(start)
-	if pretty {
-		prettyPrint(elapsed)
-	} else {
-		fmt.Printf("%d,%d\n", elapsed.Milliseconds(), petSec)
+	err := sendRequest(conn, utils.Request{ID: counter, Prime: utils.SIZE})
+	if err == nil {
+		utils.ReadPrimes(conn)
+		elapsed := time.Now().Sub(start)
+		if pretty {
+			prettyPrint(elapsed)
+		} else {
+			fmt.Printf("%d,%d\n", elapsed.Milliseconds(), petSec)
+		}
 	}
 }
 
+// Gives a readable format a prints to std out.
 func prettyPrint(elapsed time.Duration) {
 	fmt.Printf("-------------------------\n"+
 		"Time: %d ms\n", elapsed.Milliseconds())
-	fmt.Printf("Overhead: %d ms\n", elapsed.Milliseconds()-QOS)
-	if elapsed.Milliseconds() > QOS*2 {
+	fmt.Printf("Overhead: %d ms\n", elapsed.Milliseconds()-utils.QOS)
+	if elapsed.Milliseconds() > utils.QOS*2 {
 		fmt.Printf("Mal QOS\n")
 	}
 }
 
-// Formats an integer as string and sends it
-func sendRequest(conn net.Conn, request Petition){
+// Serializes a Request
+func sendRequest(conn net.Conn, request utils.Request) error {
 	encoder := gob.NewEncoder(conn)
-	encoder.Encode(request)
+	return encoder.Encode(request)
 }
 
-// Connects to the remote HOST
+// Connects to the remote host.
 func connect() net.Conn {
-	conn, err := net.Dial(CONNECTION_TYPE, "localhost"+ ":" + PORT)
-	checkError(err)
+	conn, err := net.Dial(utils.CONNECTION_TYPE, "localhost"+":"+utils.SERVER_PORT)
+	utils.CheckError(err)
 	return conn
 }
