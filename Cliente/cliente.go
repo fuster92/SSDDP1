@@ -31,7 +31,7 @@ func main() {
 		pretty = true
 	}
 
-	millisBetweenRequest := int64(1000 / float64(requestsPerSecond))
+	millisBetweenRequest := 1000 / float64(requestsPerSecond)
 	print(millisBetweenRequest)
 
 	for i := 0; i < maxNumberRequest; i++ {
