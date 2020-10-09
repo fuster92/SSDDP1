@@ -72,7 +72,7 @@ func sendRequest(conn net.Conn, request utils.Request) error {
 
 // Connects to the remote host.
 func connect() net.Conn {
-	conn, err := net.Dial(utils.ConnectionType, "155.210.154.209"+":"+utils.ServerPort)
+	conn, err := net.Dial(utils.ConnectionType, utils.ServerHost+":"+utils.ServerPort)
 	if err != nil {
 		_, _ = fmt.Fprint(os.Stderr, err.Error())
 	}

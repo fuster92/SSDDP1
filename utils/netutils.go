@@ -16,7 +16,8 @@ import (
 )
 
 const (
-	ServerPort           = "5555"
+	ServerHost           = "155.210.154.209"
+	ServerPort           = "25555"
 	ConnectionType       = "tcp"
 	Size                 = 60000
 	QOS            int64 = 1444

@@ -23,23 +23,35 @@ func main() {
 	workers := []utils.Service{{
 		Name: "Worker1",
 		Host: "",
-		Port: "5556",
+		Port: "25556",
 	}, {
 		Name: "Worker2",
 		Host: "",
-		Port: "5557",
+		Port: "25557",
 	}, {
 		Name: "Worker3",
 		Host: "",
-		Port: "5558",
+		Port: "25558",
 	}, {
 		Name: "Worker4",
 		Host: "",
-		Port: "5559",
+		Port: "25559",
 	}, {
 		Name: "Worker5",
-		Host: "",
-		Port: "5560",
+		Host: "155.210.154.210",
+		Port: "25556",
+	}, {
+		Name: "Worker6",
+		Host: "155.210.154.210",
+		Port: "25557",
+	}, {
+		Name: "Worker7",
+		Host: "155.210.154.210",
+		Port: "25558",
+	}, {
+		Name: "Worker8",
+		Host: "155.210.154.210",
+		Port: "25559",
 	}}
 
 	initializeHandlerPool(workers, jobsBuffer)
