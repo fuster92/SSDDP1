@@ -46,7 +46,7 @@ func main() {
 
 // Initializes a pool of requestHandler functions
 func initializeGoRoutinePool(buffer chan utils.Job) {
-	for i := 0; i < 7; i++ {
+	for i := 0; i < 3; i++ {
 		go requestHandler(i, buffer)
 	}
 }
