@@ -19,7 +19,7 @@ const (
 	ServerPort           = "5555"
 	ConnectionType       = "tcp"
 	Size                 = 60000
-	QOS            int64 = 744
+	QOS            int64 = 1444
 )
 
 // Sends an array of primes through a connection.
