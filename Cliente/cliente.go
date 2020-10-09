@@ -31,7 +31,7 @@ func main() {
 		pretty = true
 	}
 
-	millisBetweenRequest := 1000 / int64(requestsPerSecond)
+	millisBetweenRequest := int64(1000 / float64(requestsPerSecond))
 
 	for i := 0; i < maxNumberRequest; i++ {
 		wg.Add(1)
