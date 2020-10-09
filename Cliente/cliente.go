@@ -8,14 +8,13 @@ import (
 	"net"
 	"os"
 	"strconv"
-	"sync"
 	"time"
 )
 
 func main() {
 	var millisBetweenRequest int
 	//var maxNumberRequest int
-	var wg sync.WaitGroup
+	//var wg sync.WaitGroup
 	pretty := false
 
 	switch len(os.Args) {
@@ -33,15 +32,14 @@ func main() {
 
 	for i := 0; ; i++ {
 		//wg.Add(1)
-		go makeRequest(i, millisBetweenRequest, pretty, &wg)
+		go makeRequest(i, millisBetweenRequest, pretty)
 		time.Sleep(time.Millisecond * time.Duration(millisBetweenRequest))
 	}
 	//wg.Wait()
 }
 
 // Makes a request to the remote server.
-func makeRequest(counter int, petSec int, pretty bool, wg *sync.WaitGroup) {
-	defer wg.Done()
+func makeRequest(counter int, petSec int, pretty bool) {
 	start := time.Now()
 	conn := connect()
 	err := sendRequest(conn, utils.Request{ID: counter, Prime: utils.Size})
