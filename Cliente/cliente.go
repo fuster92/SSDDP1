@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	var requestsPerSecond int
+	var millisBetweenRequest int
 	var maxNumberRequest int
 	var wg sync.WaitGroup
 	pretty := false
@@ -23,20 +23,17 @@ func main() {
 		fmt.Printf("Usage %s req/s [maxNumberRequest] [pretty printing]", os.Args[0])
 		os.Exit(0)
 	case 3:
-		requestsPerSecond, _ = strconv.Atoi(os.Args[1])
+		millisBetweenRequest, _ = strconv.Atoi(os.Args[1])
 		maxNumberRequest, _ = strconv.Atoi(os.Args[2])
 	case 4:
-		requestsPerSecond, _ = strconv.Atoi(os.Args[1])
+		millisBetweenRequest, _ = strconv.Atoi(os.Args[1])
 		maxNumberRequest, _ = strconv.Atoi(os.Args[2])
 		pretty = true
 	}
 
-	millisBetweenRequest := 1000 / float64(requestsPerSecond)
-	print(millisBetweenRequest)
-
 	for i := 0; i < maxNumberRequest; i++ {
 		wg.Add(1)
-		go makeRequest(i, requestsPerSecond, pretty, &wg)
+		go makeRequest(i, millisBetweenRequest, pretty, &wg)
 		time.Sleep(time.Millisecond * time.Duration(millisBetweenRequest))
 	}
 	wg.Wait()
