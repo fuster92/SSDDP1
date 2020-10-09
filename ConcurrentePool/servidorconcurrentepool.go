@@ -18,7 +18,7 @@ import (
 
 func main() {
 	fmt.Printf("Starting server\n")
-	jobsBuffer := make(chan utils.Job, 10)
+	jobsBuffer := make(chan utils.Job, 20)
 	listener, err := net.Listen(utils.ConnectionType, ":"+utils.ServerPort)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error())
