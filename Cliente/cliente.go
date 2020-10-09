@@ -14,29 +14,29 @@ import (
 
 func main() {
 	var millisBetweenRequest int
-	var maxNumberRequest int
+	//var maxNumberRequest int
 	var wg sync.WaitGroup
 	pretty := false
 
 	switch len(os.Args) {
-	case 1, 2:
-		fmt.Printf("Usage %s req/s [maxNumberRequest] [pretty printing]", os.Args[0])
+	case 1:
+		fmt.Printf("Usage %s ms [pretty printing]", os.Args[0])
 		os.Exit(0)
+	case 2:
+		millisBetweenRequest, _ = strconv.Atoi(os.Args[1])
+		pretty = false
 	case 3:
 		millisBetweenRequest, _ = strconv.Atoi(os.Args[1])
-		maxNumberRequest, _ = strconv.Atoi(os.Args[2])
-	case 4:
-		millisBetweenRequest, _ = strconv.Atoi(os.Args[1])
-		maxNumberRequest, _ = strconv.Atoi(os.Args[2])
+		//maxNumberRequest, _ = strconv.Atoi(os.Args[2])
 		pretty = true
 	}
 
-	for i := 0; i < maxNumberRequest; i++ {
-		wg.Add(1)
+	for i := 0; ; i++ {
+		//wg.Add(1)
 		go makeRequest(i, millisBetweenRequest, pretty, &wg)
 		time.Sleep(time.Millisecond * time.Duration(millisBetweenRequest))
 	}
-	wg.Wait()
+	//wg.Wait()
 }
 
 // Makes a request to the remote server.
