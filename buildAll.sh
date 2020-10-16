@@ -18,6 +18,10 @@ build_concurrente_pool() {
   /usr/local/go/bin/go build -o concurrente_pool ConcurrentePool/servidorconcurrentepool.go
 }
 
+build_cliente() {
+  /usr/local/go/bin/go build -o cliente Cliente/cliente.go
+}
+
 ###
 # Construimos todos los ejecutables
 ###
@@ -27,3 +31,4 @@ build_concurrente
 build_concurrente_pool
 build_master
 build_worker
+build_cliente
